@@ -33,8 +33,7 @@ module.exports = [{
 	"export default function hello() { return 'hello'; }",
 
 	"script/test.ts":
-	function(run) {
-		return "import hello from '"+path.join(run.dir, "outside/target.ts")+"';"; },
+	"import hello from '$absolute/outside/target.ts';",
 
 	cwd:"script/",
 	script:"test.ts",
@@ -60,9 +59,8 @@ module.exports = [{
 	'{"hello":"world"}',
 	
 	"script/test.ts":
-	function(run) {
-		return "import hello from '"+path.join(run.dir, "outside/target.json")+"';"; },
-	
+	"import hello from '$absolute/outside/target.json';",
+		
 	cwd:"script/",
 	script:"test.ts",
 	flags:"",
@@ -76,7 +74,7 @@ module.exports = [{
 	"export default function hello() { return 'hello'; }",
 	
 	"script/test.ts":
-	"import hello from '../outside/target.ts';",
+	"import hello from '../outside/target.ts'; hello();",
 	
 	cwd:"",
 	script:"script/test.ts",
@@ -91,7 +89,7 @@ module.exports = [{
 	"export default function hello() { return 'hello'; }",
 	
 	"script/test.ts":
-	"import('./target.ts');",
+	"import('./target.ts').then( m => { m.default(); });",
 	
 	cwd:"script/",
 	script:"test.ts",
@@ -104,7 +102,7 @@ module.exports = [{
 	"export default function hello() { return 'hello'; }",
 	
 	"script/test.ts":
-	"import('../outside/target.ts');",
+	"import('../outside/target.ts').then( m => { m.default(); });",
 	
 	cwd:"script/",
 	script:"test.ts",
@@ -117,8 +115,7 @@ module.exports = [{
 	"export default function hello() { return 'hello'; }",
 
 	"script/test.ts":
-	function(run) {
-		return "import('"+path.join(run.dir, "outside/target.ts")+"');"; },
+	"import('$absolute/outside/target.ts').then( m => { m.default(); });",
 
 	cwd:"script/",
 	script:"test.ts",
@@ -131,7 +128,7 @@ module.exports = [{
 	'{"hello":"world"}',
 	
 	"script/test.ts":
-	"import('../outside/target.json');",
+	"import('../outside/target.json').then( m => { console.log(m.hello); });",
 	
 	cwd:"script/",
 	script:"test.ts",
@@ -144,8 +141,7 @@ module.exports = [{
 	'{"hello":"world"}',
 	
 	"script/test.ts":
-	function(run) {
-		return "import('"+path.join(run.dir, "outside/target.json")+"');"; },
+	"import('$absolute/outside/target.json').then( m => { console.log(m.hello); });",
 	
 	cwd:"script/",
 	script:"test.ts",
@@ -160,7 +156,7 @@ module.exports = [{
 	"export default function hello() { return 'hello'; }",
 	
 	"script/test.ts":
-	"import('../outside/target.ts');",
+	"import('../outside/target.ts').then( m => { m.default(); });",
 	
 	cwd:"",
 	script:"script/test.ts",
