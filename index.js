@@ -5,6 +5,7 @@ const http = require('http');
 const tempDirectory = require('temp-dir');
 const { exec } = require('child_process');
 const rimraf = require('rimraf');
+const throttleActions = require('./throttle.js');
 
 const keys = ["test_num", "desc", "cwd", "script", "flags", "expect_error"];
 
@@ -16,25 +17,33 @@ async function run() {
 	remote1 = new RemoteServer;
 	await remote1.start();
 
-	tests.forEach(async(t,i) => {
-		t.test_num = i;
-		let run_data;
-		try {
-			run_data = await prepareTest(t);
-			const log_datas = await runTest(t, run_data);
-			//console.log(...log_datas);
-			doLog(i, log_datas);
+	const test_promises = tests.map( (t,i) => {
+		return async () => {
+			t.test_num = i;
+			let run_data;
+			try {
+				run_data = await prepareTest(t);
+				const log_datas = await runTest(t, run_data);
+				doLog(i, log_datas);
+			}
+			catch(e) {
+				console.error(e);
+				doLog(i, [testNumStr(t)+' Bad test']);
+			}
+			cleanupTest(run_data);
 		}
-		catch(e) {
-			console.error(e);
-			doLog(i, [testNumStr(t)+' Bad test']);
-		}
-		cleanupTest(run_data);
 	});
 
-	console.log("done looping");
-	// ^^ this gets logged before any test concludes.
-	// need to find out when all tests are done and terminate server then.
+	try {
+		await throttleActions(test_promises, 10);
+	}
+	catch(e) {
+		console.error(e);
+	}
+
+	console.log("done");
+
+	remote1.stop();
 }
 
 let log_index = 0;
@@ -190,24 +199,23 @@ class RemoteServer {
 
 		this.test_resps = {};
 	}
-
 	async start() {
 		return new Promise( (resolve, reject) => {
-			const server = http.createServer(this.handleReq.bind(this));
-			server.listen(this.listen_port, this.listen_ip, () => {
-				resolve(server);
+			this.server = http.createServer(this.handleReq.bind(this));
+			this.server.listen(this.listen_port, this.listen_ip, () => {
+				resolve();
 			});
 		});
 	}
-
+	stop() {
+		this.server.close();
+	}
 	getUrl() {
 		return 'http://'+this.domain+':'+this.listen_port;
 	}
-
 	addResponses(test_num, resps) {
 		this.test_resps[test_num] = resps;
 	}
-
 	handleReq(req, res) {
 		const test_num = req.url.split('/')[1];
 		if( test_num === '' || isNaN(test_num) ) throw new Error("couldn't get test num from url "+req.url) ;

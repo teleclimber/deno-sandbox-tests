@@ -1,6 +1,6 @@
 
 module.exports = [{
-	desc: "remote static import of TS",
+	desc: "remote static import of TS from local",
 	
 	"$remote1/packages/target.ts": {
 		content: "export default function hello() { return 'hello'; }",
@@ -15,7 +15,7 @@ module.exports = [{
 	flags:"",
 	expect_error:true
 },{
-	desc: "remote dynamic import of TS",
+	desc: "remote dynamic import of TS from local",
 	
 	"$remote1/packages/target.ts": {
 		content: "export default function hello() { return 'hello'; }",
