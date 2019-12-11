@@ -1,20 +1,22 @@
-# DenoSandboxTests
+# Deno Sandbox Tests
 
-This is a suite of tests and a test runner. The intent is to check that the operations Deno allows, such as importing from remote locations, or loading a JSON from an absolute path match your expectations.
+[Deno](http://deno.land) is a "A secure runtime for JavaScript and TypeScript". As such it will be used to run untrusted code, and it may even be used as the sandbox component of an application platform.
 
-[Deno](http://deno.land) is a "A secure runtime for JavaScript and TypeScript". As such it may be used to run untrusted code. You may even want to use it as the sandbox component of an application platform.
+If Deno is used as the sandbox component of an application platform the developer of that platform needs to have a very clear picture of what Deno allows. This is not terribly obvious from the docs or from the discussions in issues, so this project provides a repeatable way of verifying that dangerous operations are blocked in the version of Deno installed locally.
 
-But if you're going to do that you need to have a very clear picture of what Deno allows. This is not terribly obvious from the docs or the discussions in issues, so this project provides a verifiable way of knowing what is allowed by the version of Deno you have installed.
+[Deno-sandbox-tests](https://github.com/teleclimber/deno-sandbox-tests) is a suite of tests and a test runner. Each test is an attempt to perform an operation that Deno may or may not allow, and an expectation as to whether the operation should be allowed.
+
+For example one test might attempt to load a JSON file via a static import statement using an absolute path that resolves outside your current directory. Another will try to import a remote TypeScript file using a dynamic import statement.
 
 ## What Should Be Allowed?
 
-Personally I have my own expectations on what Deno should allow and things I have to watch out for for my use case. Your use case may be different and the Deno team have their own way of thinking about things.
+Personally I have my own expectations about what Deno should allow and operations I have to watch out for for my use case. Your use case may be different and the Deno team have their own way of thinking about things.
 
 If your expectations differ from mine, you could fork this and change the `expected_error` value on those tests.
 
 # Install and Run
 
-The test runner runs on node.js so you must have that installed. It assumes "deno" is available on path.
+The test runner runs on [Node.js](https://nodejs.org/) so you must have that installed. It assumes `deno` is available on the path.
 
 Clone this repo and run `npm install`. There are very few dependencies.
 
@@ -47,15 +49,13 @@ Test 16 DANGER! allowed: local absolute static import of JSON from remote
 Test 17 OK: denied: local absolute dynamic import of TS from remote
 ```
 
-Note that test numbers are just the index of each test in the array of tests. If you add or remove a test, test numbers of subsequent tests will change. Don't depend on test numbers alone in your notes or bug reports. Use the full description of a test instead.
+Note that _test numbers_ are just the index of each test in the array of tests. If you add or remove a test, test numbers of subsequent tests will change. Don't depend on test numbers alone in your notes or bug reports. Use the full description of a test instead.
 
 # Inner Workings
 
 The node runtime starts up a dummy remote server on localhost, then iterates over the set of tests.
 
-For each test it creates a temporary directory where all local file ops will take place then it works through the test's data.
-
-Here is a sample test:
+For each test it creates a temporary directory where all local file ops will take place. Then it works through the test's data.
 
 ## Test Data
 
@@ -105,7 +105,7 @@ Currently the only other key on an object that describes a file is `content_type
 Within the content of these files, special strings can be used to refer to these locations. The test runner replaces instances of these as appropriate.
 
 - `$absolute` is the absolute local path of the test's directory
-- `$remote1` is a dummy remote server
+- `$remote1` is the URL of the dummy remote server
 
 ## Running a Test
 
