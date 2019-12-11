@@ -9,7 +9,7 @@ const throttleActions = require('./throttle.js');
 
 const keys = ["test_num", "desc", "cwd", "script", "flags", "expect_error"];
 
-const tests = require('./tests/');
+const tests = require('./deno-tests');
 
 let remote1;
 
