@@ -13,6 +13,8 @@ const tests = require('./deno-tests');
 
 let remote1;
 
+const result_strs = initResultStrs();
+
 async function run() {
 	remote1 = new RemoteServer;
 	await remote1.start();
@@ -166,13 +168,13 @@ function execTest(t, run) {
 			cwd: path.join(run.dir, t.cwd)
 		}, (err, stdout, stderr) => {
 			if( err && !t.expect_error ) {
-				resolve([testNumStr(t)+" Should allow:", t.desc, err])
+				resolve([testNumStr(t), result_strs['denied'], t.desc, err])
 			}
 			else if( !err && t.expect_error ) {
-				resolve([testNumStr(t)+" DANGER! allowed:", t.desc]);
+				resolve([testNumStr(t), result_strs['danger'], t.desc]);
 			}
 			else {
-				resolve([testNumStr(t)+" OK: "+(t.expect_error?"denied: ":"allowed: ")+t.desc]);
+				resolve([testNumStr(t), result_strs[t.expect_error?"ok-denied":"ok-allowed"],t.desc]);
 			}
 		});
 	});
@@ -185,7 +187,21 @@ function cleanupTest(run) {
 }
 
 function testNumStr(t) {
-	return "Test "+t.test_num.toString().padStart(2, " ");
+	return t.test_num.toString().padStart(3, " ");
+}
+
+function initResultStrs() {
+	const result_strs = {
+		"denied":"Denied :(",
+		"danger": "DANGER!",
+		"ok-allowed": "Ok (allowed)",
+		"ok-denied": "Ok (denied)"
+	}
+	let length = Math.max(...(Object.values(result_strs).map(v => v.length)));
+	for( let k in result_strs ) {
+		result_strs[k] = result_strs[k].padEnd(length);
+	}
+	return result_strs;
 }
 
 // server class

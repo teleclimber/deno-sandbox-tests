@@ -29,24 +29,24 @@ It should work on Mac and linux. Untested on Windows for the time being.
 # Sample Output
 
 ```
-Test  0 OK: allowed: local static import of TS, sibling, relative path
-Test  1 DANGER! allowed: local static import of TS, break root, relative path
-Test  2 DANGER! allowed: local static import of TS, break root, absolute path
-Test  3 DANGER! allowed: local static import of JSON, break root, relative path
-Test  4 DANGER! allowed: local static import of JSON, break root, absolute path
-Test  5 DANGER! allowed: local static import of TS, break root, relative path, CWD above
-Test  6 OK: denied: local dynamic import of TS, sibling, relative path
-Test  7 OK: denied: local dynamic import of TS, break root, relative path
-Test  8 OK: denied: local dynamic import of TS, break root, absolute path
-Test  9 OK: denied: local dynamic import of JSON, break root, relative path
-Test 10 OK: denied: local dynamic import of JSON, break root, absolute path
-Test 11 OK: denied: local dynamic import of TS, break root, relative path, CWD above
-Test 12 DANGER! allowed: remote static import of TS
-Test 13 OK: denied: remote dynamic import of TS
-Test 14 DANGER! allowed: local absolute static import of TS from remote
-Test 15 OK: denied: local absolute dynamic import of TS from remote
-Test 16 DANGER! allowed: local absolute static import of JSON from remote
-Test 17 OK: denied: local absolute dynamic import of TS from remote
+  0 Ok (allowed) local static import of TS, sibling, relative path
+  1 DANGER!      local static import of TS, break root, relative path
+  2 DANGER!      local static import of TS, break root, absolute path
+  3 DANGER!      local static import of JSON, break root, relative path
+  4 DANGER!      local static import of JSON, break root, absolute path
+  5 DANGER!      local static import of TS, break root, relative path, CWD above
+  6 Ok (denied)  local dynamic import of TS, sibling, relative path
+  7 Ok (denied)  local dynamic import of TS, break root, relative path
+  8 Ok (denied)  local dynamic import of TS, break root, absolute path
+  9 Ok (denied)  local dynamic import of JSON, break root, relative path
+ 10 Ok (denied)  local dynamic import of JSON, break root, absolute path
+ 11 Ok (denied)  local dynamic import of TS, break root, relative path, CWD above
+ 12 DANGER!      remote static import of TS from local
+ 13 Ok (denied)  remote dynamic import of TS from local
+ 14 DANGER!      local absolute static import of TS from remote
+ 15 Ok (denied)  local absolute dynamic import of TS from remote
+ 16 DANGER!      local absolute static import of JSON from remote
+ 17 Ok (denied)  local absolute dynamic import of JSON from remote
 ```
 
 Note that _test numbers_ are just the index of each test in the array of tests. If you add or remove a test, test numbers of subsequent tests will change. Don't depend on test numbers alone in your notes or bug reports. Use the full description of a test instead.
