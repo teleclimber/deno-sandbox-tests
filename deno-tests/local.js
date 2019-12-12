@@ -1,5 +1,3 @@
-const path = require('path');
-
 module.exports = [{
 	desc: "local static import of TS, sibling, relative path",
 	
