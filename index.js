@@ -130,13 +130,32 @@ async function runTest(t, run_data) {
 		throw new Error(e);
 	}
 
-	let log_data = [];
+	let err = null;
 	try {
-		log_data = await execTest(t, run_data);
+		err = await execTest(t, run_data);
 	}
 	catch(e) {
-		console.error("bad test:", t, e);
+		console.error("bad test:", t, e);//??
 		throw new Error(e);
+	}
+
+	let log_data = [];
+	if( err && !t.expect_error ) {
+		log_data = [testNumStr(t), result_strs['denied'], t.desc, err];
+	}
+	else if( !err && t.expect_error ) {
+		log_data = [testNumStr(t), result_strs['danger'], t.desc];
+	}
+	else {
+		log_data = [testNumStr(t), result_strs[t.expect_error?"ok-denied":"ok-allowed"],t.desc];
+	}
+
+	for( let k in remotes ) {
+		const r = remotes[k];
+		if( r.no_hit && r.got_hit ) {
+			log_data[1] = result_strs['danger'];
+			log_data[3] = (log_data[3]||'') +  "remote was hit when it shouldn't have: "+k;
+		}
 	}
 
 	return log_data;
@@ -167,15 +186,7 @@ function execTest(t, run) {
 		exec('deno --reload '+t.flags+' '+t.script, {
 			cwd: path.join(run.dir, t.cwd)
 		}, (err, stdout, stderr) => {
-			if( err && !t.expect_error ) {
-				resolve([testNumStr(t), result_strs['denied'], t.desc, err])
-			}
-			else if( !err && t.expect_error ) {
-				resolve([testNumStr(t), result_strs['danger'], t.desc]);
-			}
-			else {
-				resolve([testNumStr(t), result_strs[t.expect_error?"ok-denied":"ok-allowed"],t.desc]);
-			}
+			resolve(err);
 		});
 	});
 }
@@ -245,6 +256,8 @@ class RemoteServer {
 			content_type: 'text/plain',
 			code: 200,
 		}, test_resp);
+
+		test_resp.got_hit = true;
 
 		res.statusCode = resp.code;
 		res.setHeader('Content-Type', resp.content_type);

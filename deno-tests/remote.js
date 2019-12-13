@@ -1,13 +1,13 @@
 
 module.exports = [
 // local script imports remote:
-// vary: static/dynamic, no-fetch
+// vary: static/dynamic, no-remote
 {
 	desc: "remote static import of TS from local",
 	
 	"$remote1/packages/target.ts": {
 		content: "export default function hello() { return 'hello'; }",
-		content_type: 'text/plain',
+		no_hit: true
 	},
 	
 	"script/test.ts":
@@ -18,11 +18,11 @@ module.exports = [
 	flags:"",
 	expect_error:true
 },{
-	desc: "remote static import of TS from local, no-fetch",
+	desc: "remote static import of TS from local, no-remote",
 	
 	"$remote1/packages/target.ts": {
 		content: "export default function hello() { return 'hello'; }",
-		content_type: 'text/plain',
+		no_hit: true
 	},
 	
 	"script/test.ts":
@@ -30,14 +30,14 @@ module.exports = [
 	
 	cwd:"script/",
 	script:"test.ts",
-	flags:"--no-fetch",
+	flags:"--no-remote",
 	expect_error:true
 },{
 	desc: "remote dynamic import of TS from local",
 	
 	"$remote1/packages/target.ts": {
 		content: "export default function hello() { return 'hello'; }",
-		content_type: 'text/plain',
+		no_hit: true
 	},
 	
 	"script/test.ts":
