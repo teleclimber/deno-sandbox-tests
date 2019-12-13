@@ -56,7 +56,9 @@ function doLog(index, log_datas) {
 	
 	logs[index] = log_datas;
 	while( logs[log_index] ) {
-		console.log(...logs[log_index]);
+		const log = logs[log_index];
+		console.log(log[0], log[1], log[2]);
+		if(log[3]) console.log('ERROR:'.padStart(23), log[3]);
 		++log_index;
 	}
 }
@@ -93,8 +95,8 @@ async function runTest(t, run_data) {
 			}
 		}
 	}
-
-	const remote1_replace = remote1.getUrl()+'/'+t.test_num;
+	const random_str = Math.random().toString(36).substring(2) + Date.now().toString(36);
+	const remote1_replace = `${remote1.getUrl()}/${t.test_num}/${random_str}`;
 	[files, remotes].forEach( resps => {
 		for( let p in resps ) {
 			resps[p].content = transformContent(resps[p].content, dir, remote1_replace);
@@ -169,7 +171,7 @@ function transformContent(str, abs_dir, remote_url) {
 
 function checkTest(t, run) {
 	return new Promise( (resolve, reject) => {
-		exec('deno --allow-all --reload '+t.script, {
+		exec('deno --allow-all '+t.script, {
 			cwd: path.join(run.dir, t.cwd)
 		}, (err, stdout, stderr) => {
 			if(err) {
@@ -183,7 +185,7 @@ function checkTest(t, run) {
 
 function execTest(t, run) {
 	return new Promise( (resolve, reject) => {
-		exec('deno --reload '+t.flags+' '+t.script, {
+		exec('deno '+t.flags+' '+t.script, {
 			cwd: path.join(run.dir, t.cwd)
 		}, (err, stdout, stderr) => {
 			resolve(err);
@@ -247,7 +249,7 @@ class RemoteServer {
 		const test_num = req.url.split('/')[1];
 		if( test_num === '' || isNaN(test_num) ) throw new Error("couldn't get test num from url "+req.url) ;
 		
-		const key = '$remote1/'+req.url.split('/').slice(2).join('/');
+		const key = '$remote1/'+req.url.split('/').slice(3).join('/');
 		const test_resp = this.test_resps[test_num][key];
 
 		if( !test_resp ) throw new Error(`test resp not found for ${test_num} ${key} Keys:`);
