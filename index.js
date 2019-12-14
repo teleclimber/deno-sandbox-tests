@@ -58,7 +58,9 @@ function doLog(index, log_datas) {
 	while( logs[log_index] ) {
 		const log = logs[log_index];
 		console.log(log[0], log[1], log[2]);
-		if(log[3]) console.log('ERROR:'.padStart(23), log[3]);
+		if(log.length >3) {
+			log.slice(3).forEach(l => console.log('ERROR:'.padStart(23), l));
+		}
 		++log_index;
 	}
 }
@@ -137,26 +139,35 @@ async function runTest(t, run_data) {
 		err = await execTest(t, run_data);
 	}
 	catch(e) {
-		console.error("bad test:", t, e);//??
+		console.error("bad test:", t.desc, e);//??
 		throw new Error(e);
+	}
+
+	if( err ) {
+		let err_lines = err.split('\n');
+		if( err_lines[0].startsWith('Command failed:') ) err = err_lines[1];
 	}
 
 	let log_data = [];
 	if( err && !t.expect_error ) {
+		console.log('err && !expect error');
 		log_data = [testNumStr(t), result_strs['denied'], t.desc, err];
 	}
 	else if( !err && t.expect_error ) {
 		log_data = [testNumStr(t), result_strs['danger'], t.desc];
 	}
-	else {
-		log_data = [testNumStr(t), result_strs[t.expect_error?"ok-denied":"ok-allowed"],t.desc];
+	else if( err && t.expect_error ) {
+		log_data = [testNumStr(t), result_strs["ok-denied"], t.desc, err];
+	}
+	else if( !err && !t.expect_error ) {
+		log_data = [testNumStr(t), result_strs["ok-allowed"], t.desc];
 	}
 
 	for( let k in remotes ) {
 		const r = remotes[k];
 		if( r.no_hit && r.got_hit ) {
 			log_data[1] = result_strs['danger'];
-			log_data[3] = (log_data[3]||'') +  "remote was hit when it shouldn't have: "+k;
+			log_data.push("remote was hit when it shouldn't have: "+k);
 		}
 	}
 
@@ -188,9 +199,18 @@ function execTest(t, run) {
 		exec('deno '+t.flags+' '+t.script, {
 			cwd: path.join(run.dir, t.cwd)
 		}, (err, stdout, stderr) => {
-			resolve(err);
+			if( err && errIsBadTest(err.message) ) reject(err.message);
+			if( err ) resolve(err.message);
+			else resolve();
 		});
 	});
+}
+
+function errIsBadTest(err_str) {
+	if( !err_str ) return false;
+	// This catches tests that error because of an incorrect argument:
+	if( err_str.match(/Found argument .* which wasn't expected/)) return true;
+	return false;
 }
 
 function cleanupTest(run) {

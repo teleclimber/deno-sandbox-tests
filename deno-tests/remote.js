@@ -145,8 +145,10 @@ module.exports = [
 },{
 	desc: "remote dynamic import of TS, below run script, from remote",
 	
-	"$remote1/somepackage/lib/target.ts":
-	"export default function hello() { return 'hello'; }",
+	"$remote1/somepackage/lib/target.ts": {
+		content: "export default function hello() { return 'hello'; }",
+		no_hit: true
+	},
 		
 	"$remote1/somepackage/test.ts":
 	"import('./lib/target.ts').then( mod => console.log(mod.default()) );",
@@ -158,8 +160,10 @@ module.exports = [
 },{
 	desc: "remote static import of TS, break root, from remote",
 	
-	"$remote1/outside/target.ts":
-	"export default function hello() { return 'hello'; }",
+	"$remote1/outside/target.ts": {
+		content: "export default function hello() { return 'hello'; }",
+		no_hit: true
+	},
 		
 	"$remote1/somepackage/test.ts":
 	"import hello from '../outside/target.ts'; console.log(hello());",
