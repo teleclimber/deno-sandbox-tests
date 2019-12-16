@@ -2,6 +2,7 @@ const fs = require('fs');
 const fsPromises = fs.promises;
 const path = require('path');
 const http = require('http');
+const dns = require( 'dns');
 const tempDirectory = require('temp-dir');
 const { exec } = require('child_process');
 const rimraf = require('rimraf');
@@ -16,8 +17,22 @@ let remote1;
 const result_strs = initResultStrs();
 
 async function run() {
+	if( !checkDescriptions() ) {
+		process.exit(1);
+	}
+
 	remote1 = new RemoteServer;
 	await remote1.start();
+
+	try {
+		await remote1.testDomain();
+	}
+	catch(e) {
+		console.error("There was a problem connecting with the dummy server.");
+		console.error(`Did you add ${remote1.domain} to /etc/hosts?`);
+		console.error(e);
+		process.exit(1);
+	}
 
 	const test_promises = tests.map( (t,i) => {
 		return async () => {
@@ -237,6 +252,35 @@ function initResultStrs() {
 	return result_strs;
 }
 
+///
+function checkDescriptions() {
+	const keys = {};
+	const _no_desc = [];
+	tests.forEach( (t, i)=> {
+		const desc = t.desc;
+		if( !desc ) _no_desc.push(i);
+		if( !keys[desc] ) keys[desc] = [];
+		keys[desc].push(i);
+	});
+
+	let ok = true;
+	if( _no_desc.length ) {
+		ok = false;
+		console.log('ERROR: the following tests have no description:');
+		_no_desc.forEach(test_i => console.log('Test #'+test_i, tests[test_i]));
+	}
+
+	for( let desc in keys ) {
+		if( keys[desc].length > 1 ) {
+			ok = false;
+			console.log('ERROR: the following tests have the same description:' );
+			keys[desc].forEach(test_i => console.log('Test #'+test_i, tests[test_i]));
+		}
+	}
+
+	return ok;
+}
+
 // server class
 class RemoteServer {
 	constructor() {
@@ -262,10 +306,41 @@ class RemoteServer {
 	getUrl() {
 		return 'http://'+this.domain+':'+this.listen_port;
 	}
+	testDomain() {
+		return new Promise((resolve, reject) => {
+			dns.lookup(this.domain, (err, address, family) => {
+				if( err ) {
+					reject(err);
+					return;
+				}
+				console.log('address: %j family: IPv%s', address, family);
+
+				const opts = {
+					hostname: this.domain,
+					port: this.listen_port,
+					path: '/domain-test',
+					method: 'GET'
+				};
+				const req = http.request(opts, res => {
+					if( res.statusCode === 200 ) resolve();
+					else reject('Status not 200: '+res.statusCode);
+				});
+				req.on('error', error => {
+					reject(error);
+				})
+				req.end();
+			});
+		});
+	}
 	addResponses(test_num, resps) {
 		this.test_resps[test_num] = resps;
 	}
 	handleReq(req, res) {
+		if( req.url.split('/')[1] === 'domain-test' ) {
+			res.end();
+			return;
+		}
+
 		const test_num = req.url.split('/')[1];
 		if( test_num === '' || isNaN(test_num) ) throw new Error("couldn't get test num from url "+req.url) ;
 		
