@@ -1,6 +1,6 @@
 # Deno Sandbox Tests
 
-[Deno](http://deno.land) is a "A secure runtime for JavaScript and TypeScript". As such it will be used to run untrusted code, and it may even be used as the sandbox component of an application platform.
+[Deno](https://deno.land) is a "A secure runtime for JavaScript and TypeScript". As such it will be used to run untrusted code, and it may even be used as the sandbox component of an application platform.
 
 If Deno is used as the sandbox component of an application platform the developer of that platform needs to have a very clear picture of what Deno allows. This is not terribly obvious from the docs or from the discussions in issues, so this project provides a repeatable way of verifying that dangerous operations are blocked in the version of Deno installed locally.
 
@@ -98,11 +98,12 @@ A simple relative path like `script/test.ts` tells the test runner to create a l
 
 There can be as many of these files, local or remote, as necessary.
 
-If the value is a string, that string is the contents of the file. If it's an object the `content` key should be a string that serves this purpose.
+If the value is a string, that string is the contents of the file. If it's an object it may have the following properties:
+- `content` is the contents of the file (required).
+- `content_type` is used by the dummy remote server as the `Content-Type` of the response (default is `text/plain`).
+- `no_hit`: the test will be labeled as dangerous if `no_hit` is true and the dummy server receives a request for that file.
 
-Currently the only other key on an object that describes a file is `content_type` which is used by the dummy server to set the content type of the response.
-
-Within the content of these files, special strings can be used to refer to these locations. The test runner replaces instances of these as appropriate.
+Within the content of these files, special strings can be used to refer to locations. The test runner replaces instances of these as appropriate.
 
 - `$absolute` is the absolute local path of the test's directory
 - `$remote1` is the URL of the dummy remote server
