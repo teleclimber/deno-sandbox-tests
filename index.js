@@ -285,7 +285,6 @@ function checkDescriptions() {
 class RemoteServer {
 	constructor() {
 		this.listen_ip = '127.0.0.1';
-		this.listen_port = 55889;
 		this.domain = 'deno-sandbox-tests-1.develop';
 		// ^^ we might be able to start a single server at a single port
 		// ..and have multiple domains redirecting there.
@@ -295,7 +294,9 @@ class RemoteServer {
 	async start() {
 		return new Promise( (resolve, reject) => {
 			this.server = http.createServer(this.handleReq.bind(this));
-			this.server.listen(this.listen_port, this.listen_ip, () => {
+			this.server.listen(undefined, this.listen_ip, () => {
+				this.listen_port = this.server.address().port;
+				console.log('Dummy server listening on port', this.listen_port);
 				resolve();
 			});
 		});
@@ -313,8 +314,6 @@ class RemoteServer {
 					reject(err);
 					return;
 				}
-				console.log('address: %j family: IPv%s', address, family);
-
 				const opts = {
 					hostname: this.domain,
 					port: this.listen_port,
