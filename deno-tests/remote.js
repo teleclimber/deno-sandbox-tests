@@ -69,7 +69,7 @@ module.exports = [
 	"export default function hello() { return 'hello'; }",
 
 	"$remote1/packages/script.ts":
-	"import hello from 'file://$absolute/script/targetzzz.ts'; hello();",
+	"import hello from 'file://$absolute/script/target.ts'; hello();",
 		
 	cwd:"",
 	script:"$remote1/packages/script.ts",
