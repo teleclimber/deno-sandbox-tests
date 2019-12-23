@@ -1,3 +1,4 @@
+const loader = require('./lib/loader.js');
 const DummyRemoteServer = require( './lib/dummy-server.js');
 const Results = require( './lib/results.js');
 const RunTest = require('./lib/run-test.js');
@@ -8,7 +9,7 @@ const tests = require('./deno-tests');
 async function run() {
 	const options = {};
 
-	if( !checkDescriptions() ) {
+	if( !loader.checkDescriptions(tests) ) {
 		process.exit(1);
 	}
 
@@ -47,35 +48,5 @@ async function run() {
 
 	remote1.stop();
 }
-
-///
-function checkDescriptions() {
-	const keys = {};
-	const _no_desc = [];
-	tests.forEach( (t, i)=> {
-		const desc = t.desc;
-		if( !desc ) _no_desc.push(i);
-		if( !keys[desc] ) keys[desc] = [];
-		keys[desc].push(i);
-	});
-
-	let ok = true;
-	if( _no_desc.length ) {
-		ok = false;
-		console.log('ERROR: the following tests have no description:');
-		_no_desc.forEach(test_i => console.log('Test #'+test_i, tests[test_i]));
-	}
-
-	for( let desc in keys ) {
-		if( keys[desc].length > 1 ) {
-			ok = false;
-			console.log('ERROR: the following tests have the same description:' );
-			keys[desc].forEach(test_i => console.log('Test #'+test_i, tests[test_i]));
-		}
-	}
-
-	return ok;
-}
-
 
 run();

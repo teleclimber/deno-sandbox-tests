@@ -18,7 +18,7 @@ If your expectations differ from mine, you could fork this and change the `expec
 
 The test runner runs on [Node.js](https://nodejs.org/) so you must have that installed. It assumes `deno` is available on the path.
 
-Clone this repo and run `npm install`. There are very few dependencies.
+Clone this repo and run `npm install`.
 
 For remote tests to work you have to add `deno-sandbox-tests-1.develop` to your `/etc/hosts` or to your `dnsmasq` config so that it resolves to `127.0.0.1`. (I'll make this configurable later.)
 
@@ -30,23 +30,48 @@ It should work on Mac and linux. Untested on Windows for the time being.
 
 ```
   0 Ok (allowed) local static import of TS, sibling, relative path
-  1 DANGER!      local static import of TS, break root, relative path
-  2 DANGER!      local static import of TS, break root, absolute path
-  3 DANGER!      local static import of JSON, break root, relative path
-  4 DANGER!      local static import of JSON, break root, absolute path
-  5 DANGER!      local static import of TS, break root, relative path, CWD above
+  1 DANGER       local static import of TS, break root, relative path
+  2 DANGER       local static import of TS, break root, absolute path
+  3 DANGER       local static import of JSON, break root, relative path
+  4 DANGER       local static import of JSON, break root, absolute path
+  5 DANGER       local static import of TS, break root, relative path, CWD above
   6 Ok (denied)  local dynamic import of TS, sibling, relative path
+                 ERROR: error: Uncaught TypeError: run again with the --allow-read flag
   7 Ok (denied)  local dynamic import of TS, break root, relative path
+                 ERROR: error: Uncaught TypeError: run again with the --allow-read flag
   8 Ok (denied)  local dynamic import of TS, break root, absolute path
+                 ERROR: error: Uncaught TypeError: run again with the --allow-read flag
   9 Ok (denied)  local dynamic import of JSON, break root, relative path
+                 ERROR: error: Uncaught TypeError: run again with the --allow-read flag
  10 Ok (denied)  local dynamic import of JSON, break root, absolute path
+                 ERROR: error: Uncaught TypeError: run again with the --allow-read flag
  11 Ok (denied)  local dynamic import of TS, break root, relative path, CWD above
- 12 DANGER!      remote static import of TS from local
- 13 Ok (denied)  remote dynamic import of TS from local
- 14 DANGER!      local absolute static import of TS from remote
- 15 Ok (denied)  local absolute dynamic import of TS from remote
- 16 DANGER!      local absolute static import of JSON from remote
- 17 Ok (denied)  local absolute dynamic import of JSON from remote
+                 ERROR: error: Uncaught TypeError: run again with the --allow-read flag
+ 12 DANGER       remote static import of TS from local
+                 ERROR: remote was hit when it shouldn't have: $remote1/packages/target.ts
+ 13 DANGER       remote static import of TS from local, no-remote
+                 ERROR: Cannot resolve module "http://deno-sandbox-tests-1.develop:55308/13/rrvxj9dxamk4iwgfdi/packages/target.ts" from "file:///private/var/folders/6z/x6_ksh3d2blc7s6rn5fy098h0000gn/T/foo-OzITCL/script/test.ts"
+                 ERROR: remote was hit when it shouldn't have: $remote1/packages/target.ts
+ 14 DANGER       remote dynamic import of TS from local
+                 ERROR: error: Uncaught TypeError: run again with the --allow-net flag
+                 ERROR: remote was hit when it shouldn't have: $remote1/packages/target.ts
+ 15 Ok (allowed) run a remote script
+ 16 DANGER       local absolute static import of TS from remote
+ 17 Ok (denied)  local absolute dynamic import of TS from remote
+                 ERROR: error: Uncaught TypeError: run again with the --allow-read flag
+ 18 DANGER       local absolute static import of JSON from remote
+ 19 Ok (denied)  local absolute dynamic import of JSON from remote
+                 ERROR: error: Uncaught TypeError: run again with the --allow-read flag
+ 20 Ok (allowed) remote static import of TS, below run script, from remote
+ 21 DANGER       remote dynamic import of TS, below run script, from remote
+                 ERROR: error: Uncaught TypeError: run again with the --allow-net flag
+                 ERROR: remote was hit when it shouldn't have: $remote1/somepackage/lib/target.ts
+ 22 DANGER       remote static import of TS, break root, from remote
+                 ERROR: remote was hit when it shouldn't have: $remote1/outside/target.ts
+ 23 Ok (denied)  read file relative path below
+                 ERROR: error: Uncaught PermissionDenied: run again with the --allow-read flag
+ 24 Ok (denied)  read file absolute path break root
+                 ERROR: error: Uncaught PermissionDenied: run again with the --allow-read flag
 ```
 
 Note that _test numbers_ are just the index of each test in the array of tests. If you add or remove a test, test numbers of subsequent tests will change. Don't depend on test numbers alone in your notes or bug reports. Use the full description of a test instead.
