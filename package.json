@@ -1,6 +1,6 @@
 {
   "name": "deno-sandbox-tests",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Checks whether Deno sandboxes scripts as I expect",
   "main": "index.js",
   "scripts": {

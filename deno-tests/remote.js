@@ -1,4 +1,3 @@
-
 module.exports = [
 // local script imports remote:
 // vary: static/dynamic, no-remote
@@ -41,7 +40,7 @@ module.exports = [
 	},
 	
 	"script/test.ts":
-	"import('$remote1/packages/target.ts');",
+	"import('$remote1/packages/target.ts').then( m => { m.default(); });",
 	
 	cwd:"script/",
 	script:"test.ts",

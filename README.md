@@ -139,6 +139,10 @@ Once all the transformations have been performed and the test is ready to run, D
 
 Finally the test is actually run and the results recorded.
 
+# Caveats
+
+Currently all remote requests are made over http (not https) and the "remote" domain resolves to 127.0.0.1. Therefore if either of these facts affect Deno's behavior with respect to permissions, the test results can not be trusted.
+
 # Contribute
 
 Please feel free to contribute tests to this project. The description should be complete and concise and unique, and the test should verify something useful regarding Deno's sandbox mechanism.
