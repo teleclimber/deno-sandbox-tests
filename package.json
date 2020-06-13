@@ -9,11 +9,12 @@
   "author": "Olivier Forget",
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.19.0",
-    "rimraf": "^3.0.0",
+    "axios": "^0.19.2",
+    "clone": "^2.1.2",
+    "rimraf": "^3.0.2",
     "temp-dir": "^2.0.0"
   },
   "devDependencies": {
-    "jest": "^24.9.0"
+    "jest": "^26.0.1"
   }
 }
