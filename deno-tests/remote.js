@@ -75,6 +75,7 @@ module.exports = [
 	cwd:"",
 	script:"$remote1/packages/script.ts",
 	flags:"",
+	check_fails: true,
 	expect_error:true
 },
 // The next test could be be "local relative static import of TS from remote"
@@ -108,6 +109,7 @@ module.exports = [
 	cwd:"script/",
 	script:"$remote1/packages/script.ts",
 	flags:"",
+	check_fails: true,
 	expect_error:true
 },
 // The next test could be be "local relative static import of TS from remote"
@@ -126,6 +128,7 @@ module.exports = [
 	cwd:"script/",
 	script:"$remote1/packages/script.ts",
 	flags:"",
+	check_fails: true,
 	expect_error:true
 },
 // remote script imports another remote:

@@ -49,6 +49,7 @@ module.exports = [{
 	cwd:"script/",
 	script:"test.ts",
 	flags:"",
+	check_fails: true,
 	expect_error: true
 },{
 	desc: "local static import of JSON, break root, absolute path",
@@ -62,6 +63,7 @@ module.exports = [{
 	cwd:"script/",
 	script:"test.ts",
 	flags:"",
+	check_fails: true,
 	expect_error: true
 },
 // Now let's put the CWD at the root of the test dir, so target is within it
@@ -131,6 +133,7 @@ module.exports = [{
 	cwd:"script/",
 	script:"test.ts",
 	flags:"",
+	check_fails: true,
 	expect_error: true
 },{
 	desc: "local dynamic import of JSON, break root, absolute path",
@@ -144,6 +147,7 @@ module.exports = [{
 	cwd:"script/",
 	script:"test.ts",
 	flags:"",
+	check_fails: true,
 	expect_error: true
 },
 // Now let's put the CWD at the root of the test dir, so target is within it

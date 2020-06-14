@@ -101,6 +101,7 @@ Each test is described with a JS object similar to the one below:
 	cwd:"script/",
 	script:"test.ts",
 	flags:"",
+  check_fails: false,
 	expect_error:true
 }
 ```
@@ -111,6 +112,7 @@ Known keys are as follows:
 - `cwd` is the current working directory that Deno will be run from relative to the local test dir.
 - `script` is the last argument passed to Deno telling it which script to run. Naturally it is relative to the `cwd`.
 - `flags` is used to pass additional flags to Deno.
+- `check_fails` tells the runtime that the test will trigger an error even with `--allow-all`.
 - `expect_error` tells the runtime whether Deno should error or not. If `expect_error` is true, that means that we expect Deno will disallow the import/request/file access, and will result in a "Danger" result if it runs without error.
 
 Other keys in the test are interpreted as files that can be accessed either via the filesystem or a dummy remote server.
@@ -135,9 +137,11 @@ Within the content of these files, special strings can be used to refer to locat
 
 ## Running a Test
 
-Once all the transformations have been performed and the test is ready to run, Deno is called to run the script with `--allow-all` and checked for errors. A test that fails to run with `--allow-all` is considered a bad test and will be reported as such.
+Once all the transformations have been performed the test is ready to run.
 
-Finally the test is actually run and the results recorded.
+First Deno is called to run the script with `--allow-all` and checked for errors. A test that fails to run with `--allow-all` is considered a bad test and will be reported as such unless `check_fails` key is true. (Some sandbox violations always cause errors, even with `--allow-all`.)
+
+Finally the test is actually run with the test's flags and the results recorded.
 
 # Caveats
 
