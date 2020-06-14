@@ -2,6 +2,21 @@ module.exports = [
 // local script imports remote:
 // vary: static/dynamic, no-remote
 {
+	desc: "remote static import of JS from local",
+	
+	"$remote1/packages/target.js": {
+		content: "export default function hello() { return 'hello'; }",
+		no_hit: true
+	},
+	
+	"script/test.js":
+	"import hello from '$remote1/packages/target.js'; hello();",
+	
+	cwd:"script/",
+	script:"test.js",
+	flags:"",
+	expect_error:true
+},{
 	desc: "remote static import of TS from local",
 	
 	"$remote1/packages/target.ts": {
@@ -53,7 +68,7 @@ module.exports = [
 	
 	"$remote1/script/test.ts": {
 		content: "console.log('hello');",
-		no_hit: true
+		//no_hit: true
 	},
 	
 	cwd:"",
