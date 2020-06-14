@@ -51,8 +51,10 @@ module.exports = [
 {
 	desc: "run a remote script",
 	
-	"$remote1/script/test.ts":
-	"console.log('hello');",
+	"$remote1/script/test.ts": {
+		content: "console.log('hello');",
+		no_hit: true
+	},
 	
 	cwd:"",
 	script:"$remote1/script/test.ts",
