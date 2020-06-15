@@ -10,7 +10,7 @@ For example one test might attempt to load a JSON file via a static import state
 
 ## What Should Be Allowed?
 
-Personally I have my own expectations about what Deno should allow and operations I have to watch out for for my use case. Your use case may be different and the Deno team have their own way of thinking about things.
+Personally I have my own expectations about what Deno should allow and operations I have to watch out for my use case. Your use case may be different and the Deno team have their own way of thinking about things.
 
 If your expectations differ from mine, you could fork this and change the `expected_error` value on those tests.
 
@@ -101,7 +101,7 @@ Each test is described with a JS object similar to the one below:
 	cwd:"script/",
 	script:"test.ts",
 	flags:"",
-  check_fails: false,
+	check_fails: false,
 	expect_error:true
 }
 ```
