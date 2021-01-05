@@ -12,7 +12,7 @@
   "author": "Olivier Forget",
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "clone": "^2.1.2",
     "rimraf": "^3.0.2",
     "temp-dir": "^2.0.0"
